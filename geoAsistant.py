@@ -1,5 +1,5 @@
-monicaToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiMjMyMjQ2NWIzNGZjNmRmYWZhM2FhZDczM2NhYTdjOWU3OTQwZjZiMzFjMmQ1YzJmOWE5YzQwOGZlM2FlNWRjZDBiZThiNzllNzUyYWRmNGQiLCJpYXQiOjE2ODY1NDQ3NzQuNDMyNTY0LCJuYmYiOjE2ODY1NDQ3NzQuNDMyNTY2LCJleHAiOjE3MTgxNjcxNzQuNDI0NjE5LCJzdWIiOiIzNzI1NSIsInNjb3BlcyI6W119.oRB-WmHwT9CMyWuAn5zl1URXGi4Wqb-x2ixhLAcxhG1IL_COkRTnBXr2jMJGK88TaTLyqBpcdnT1irDekSdgCek6zphuJFFlK4Fygu8gSuWf9BqbX5BVV2Q1MxWJC3q_STf_BwHUmG971wIlzy0IlJDSfx8u7lZR2Iktoq21l9VSqDMV3rtHa40n7twhe8MbYOi-ybpF12ciV6nRljKNza2_Y2MktmBDuqENNRKZcBfmGdHQTqL0ncvMx4ps6rIwvDKMrwZkRQ8s5_EkeRf8WFqavLdgnozeiTUj4WXCtasj8Vz9sFZYzVPHCBPasRsvh9iCi8txHf5OZTmn0qDKYvsTOu401Z6D_sWyrjt2W99gLSJuoEEi5mWbIDTUTulQ6nKiJh-vGXI1wTZQyObybJ26yPk0dSuvWTw1LO6OItOz964PcV9Ca2N8trIIiDVnoaJ1hwJky4305y913sJH2mQwIUIbnZwMxaGeXswUqUCu_bBf3D0v9_265_p2MyAYBGAlnfRGbHo2qa-dOHvjbCD2R9KL-CruxDoHyiQ4TL3NytVKnRK0VbblnkMEK1znU_gsaTwe5obrAH_7dPRPgDHOpBAJB_2AHf8XW59w3QnIE2ztMha20GMbn5ZGB8DeRrkH932thsnMQm-T0szs5mmh4XS9KQ3qtX8neTSgbi4"
-gptToken = "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"
+gptToken = "sk-VxsLh9VBcBtrLWHBLpGkT3BlbkFJgOEBuWbJ9yZr21ZVjRB"
+#1
 import openai
 # Configurar la API de OpenAI
 openai.api_key = gptToken
@@ -175,7 +175,7 @@ def run_alexa():
     elif 'adiós' or 'apagate' or 'hasta luego' in command:
         global close
         close=1
-        talk('Okay')
+        
     elif 'busca' in command:
         search = command.replace('busca', '')
         pywhatkit.search(search)
