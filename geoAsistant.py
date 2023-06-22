@@ -1,5 +1,6 @@
-gptToken = "sk-VxsLh9VBcBtrLWHBLpGkT3BlbkFJgOEBuWbJ9yZr21ZVjRB"
+gptToken = "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"
 #1
+from unidecode import unidecode
 import openai
 # Configurar la API de OpenAI
 openai.api_key = gptToken
@@ -30,12 +31,12 @@ def take_command():
             #print("Adjusting for background noise. One second")
             listener.adjust_for_ambient_noise(source)
             #talk("Ok, I'm listening to you")
-            print('listening...')
-            voice = listener.listen(source, phrase_time_limit=10)
+            print('Te escucho...')
+            voice = listener.listen(source, phrase_time_limit=7)
             command = listener.recognize_google(voice, language="es-ES")
             command = command.lower()
-            if 'alexa' in command:
-                command = command.replace('alexa', '')
+            if 'geo' in command:
+                command = command.replace('geo', '')
             print(command)
     except LookupError:   # speech is unintelligible
         print("Could not understand audio")
@@ -48,17 +49,18 @@ def take_command():
         print("Error:", e)
     except:
         print('Goodbye')
-    return command
+    return unidecode(command.lower())
 
 def get_info():
     try:
         info = ""
         with sr.Microphone() as source:
             listener.adjust_for_ambient_noise(source)
-            talk('¿Cuál mineral quieres buscar?')
-            voice = listener.listen(source,phrase_time_limit=10)
+            talk('¿Qué quieres saber?')
+            voice = listener.listen(source,phrase_time_limit=7)
             info = listener.recognize_google(voice, language="es-ES")
             info = info.lower()
+            print(info)
     except LookupError:   # speech is unintelligible
         print("Could not understand audio")
         pass
@@ -73,26 +75,25 @@ def get_info():
     return info
 
 def obtener_respuesta(pregunta):
-    respuesta = openai.Completion.create(
-        engine='text-davinci-003',  # Utiliza el motor 'text-davinci-003' para ChatGPT
-        prompt=pregunta,
-        max_tokens=100,  # Define la longitud máxima de la respuesta generada
-        temperature=0.7,  # Controla la creatividad de la respuesta generada
-        n=1,  # Especifica el número de respuestas a generar
-        stop=None,  # Puedes definir una cadena para detener la respuesta en un punto específico
-        log_level='info'  # Opcionalmente, puedes habilitar el registro de nivel de información
-    )
-    return respuesta.choices[0].text.strip()
+    res = ""
+    try:
+        respuesta = openai.Completion.create(
+            engine='text-davinci-003',  # Utiliza el motor 'text-davinci-003' para ChatGPT
+            prompt=pregunta,
+            max_tokens=100,  # Define la longitud máxima de la respuesta generada
+            temperature=0.7,  # Controla la creatividad de la respuesta generada
+            n=1,  # Especifica el número de respuestas a generar
+            stop=None  # Puedes definir una cadena para detener la respuesta en un punto específico
+        )
+        res = respuesta.choices[0].text.strip()
+    except Exception as e:
+        print("\nOcurrió un error. Error: " + e)
+    return res
 
 def run_alexa():
     command = take_command()
     talk('Procesando tu petición...')
-    if 'reproduce' in command:
-        song = command.replace('reproduce', '')
-        print('Reproduciendo: ' + song)
-        talk('Reproduciendo: ' + song)
-        pywhatkit.playonyt(song)
-    elif 'cuales son' in command:
+    if 'cuales son' in command:
         try:
             print(command)
             person = command
@@ -151,32 +152,17 @@ def run_alexa():
         else:
             print("No se encontró información sobre el mineral.")
 
-    elif 'chat gpt' in command:
+    elif 'busca' in command:
         #pregunta_usuario = get_info()
-        pregunta_usuario = input("Pregunta: ")
+        # pregunta_usuario = input("Hazme una pregunta: ")
+        pregunta_usuario = get_info()
         respuesta_chatgpt = obtener_respuesta(pregunta_usuario)
         talk(respuesta_chatgpt)
-    elif 'mónica' in command:
-        try:
-            # url = "https://app.monicahq.com/api"
-            # texto = "Muestrame todas las propiedades del mineral mercurio"
-            # payload = {'text': texto}
-            # headers = {'Authorization': 'Token ' + monicaToken}
-
-            # response = requests.post(url, headers=headers, data=payload)
-            # data = json.loads(response.text)
-            # sentimientos = data['sentiments']
-            # entidades = data['entities']
-            # client = MonicaClient(access_token=monicaToken, api_url='https://app.monicahq.com/api')
-            # print(client.me)
-            print('j')
-        except Exception as e:
-            print("Error:", e)
     elif 'adiós' or 'apagate' or 'hasta luego' in command:
         global close
         close=1
         
-    elif 'busca' in command:
+    elif 'buscqa' in command:
         search = command.replace('busca', '')
         pywhatkit.search(search)
     
