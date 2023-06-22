@@ -1,4 +1,4 @@
-gptToken = "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"
+gptToken = "sk-38NsXfKe0dqqHd31Hc2wT3BlbkFJ3gHYTIU2q5ii4UlOfSe"
 #1
 from unidecode import unidecode
 import openai
@@ -20,7 +20,7 @@ import json
 #-----------------------------------------------------------------------------------------
 #Declaracion de funciones
 def talk(text):
-    print(text)
+    print('Geo: '+text)
     engine.say(text)
     engine.runAndWait()
 
@@ -51,12 +51,13 @@ def take_command():
         print('Goodbye')
     return unidecode(command.lower())
 
-def get_info():
+def get_info(message):
     try:
         info = ""
         with sr.Microphone() as source:
             listener.adjust_for_ambient_noise(source)
-            talk('¿Qué quieres saber?')
+            talk(message)
+            print('Geo: Te escucho...')
             voice = listener.listen(source,phrase_time_limit=7)
             info = listener.recognize_google(voice, language="es-ES")
             info = info.lower()
@@ -90,19 +91,18 @@ def obtener_respuesta(pregunta):
         print("\nOcurrió un error. Error: " + e)
     return res
 
-def run_alexa():
+def run_geo():
     command = take_command()
     talk('Procesando tu petición...')
-    if 'cuales son' in command:
+    if 'quiero informacion sobre una persona' in command:
         try:
-            print(command)
-            person = command
+            person = get_info('¿A quién quieres buscar?')
             wolfram_res = next(client.query(person).results).text
             talk(wolfram_res)
         except Exception as e:
             print("Error:", e)
-    elif 'muéstrame más información sobre' in command:
-        person = command.replace('muéstrame más información sobre', '')
+    elif 'muestrame mas informacion' in command:
+        person = get_info('¿Qué quieres saber?')
         info = wikipedia.summary(person, 1)
         print('wikipedia result: '+info)
         talk('wikipedia result: '+info)
@@ -135,8 +135,8 @@ def run_alexa():
         print(page["extract"])
         talk(page["extract"])
 
-    elif 'minerales' in command:
-        pregunta_usuario = get_info()
+    elif 'quiero saber mas sobre los minerales' in command:
+        pregunta_usuario = get_info('¿Qué quieres saber sobre los minerales?')
         # Crear un objeto de la API de Wikipedia
         wiki_wiki = wikipediaapi.Wikipedia('es')
 
@@ -152,20 +152,18 @@ def run_alexa():
         else:
             print("No se encontró información sobre el mineral.")
 
-    elif 'busca' in command:
+    elif 'yo tengo una duda' in command:
         #pregunta_usuario = get_info()
         # pregunta_usuario = input("Hazme una pregunta: ")
-        pregunta_usuario = get_info()
+        pregunta_usuario = get_info('¿Qué quieres saber?')
         respuesta_chatgpt = obtener_respuesta(pregunta_usuario)
         talk(respuesta_chatgpt)
-    elif 'adiós' or 'apagate' or 'hasta luego' in command:
+    elif 'adios' in command:
         global close
         close=1
-        
-    elif 'buscqa' in command:
-        search = command.replace('busca', '')
+    elif 'busca en google' in command:
+        search = get_info('¿Qué quieres buscar en Google?')
         pywhatkit.search(search)
-    
     else:
         talk('NO te entendí, ¿puedes repetirlo?')
 
@@ -178,9 +176,9 @@ print(voices)
 engine.setProperty('voice', voices[3].id)
 close=0
 os.system('cls' if os.name == 'nt' else 'clear')
-talk('Hola, soy Alexa. ¿Cómo puedo ayudarte?')
+talk('Hola, mi nombre es Geo. Soy un asistente virtual. ¿Cómo puedo ayudarte?')
 while True:
-    run_alexa()
+    run_geo()
     if close == 1:
         talk('¡Que tengas un buen día!')
         break
